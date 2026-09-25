@@ -130,6 +130,7 @@ td.sup { color: var(--red); }
 .site-footer { background: var(--navy); color: var(--cream); font-size: .85rem; padding: 18px 0; }
 .site-footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .site-footer a { color: var(--gold); }
+.site-footer .author { flex-basis: 100%; margin: 6px 0 0; }
 .site-footer .disclaimer { flex-basis: 100%; margin: 4px 0 0; font-size: .8rem; opacity: .8; }
 
 /* Data notice banner */
