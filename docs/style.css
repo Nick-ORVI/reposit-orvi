@@ -136,6 +136,5 @@ td.sup { color: var(--red); }
 /* Data notice banner */
 .notice { background: #FDF3DC; border-bottom: 1px solid var(--gold); color: #5a3d00; }
 .notice-inner { display: flex; gap: 12px; align-items: flex-start; padding-top: 12px; padding-bottom: 12px; }
-.notice svg { width: 22px; height: 22px; flex: none; color: var(--red); margin-top: 1px; }
 .notice p { margin: 0; font-size: .92rem; line-height: 1.45; }
 .notice strong { color: var(--navy); }
