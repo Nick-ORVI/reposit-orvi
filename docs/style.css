@@ -32,7 +32,6 @@ code { font-size: .85em; background: var(--sand); padding: 1px 5px; border-radiu
 .site-header { background: var(--navy); color: var(--cream); border-bottom: 4px solid var(--red); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--cream); text-decoration: none; }
-.brand-mark { width: 34px; height: 34px; }
 .brand-name { font-size: 1.45rem; font-weight: 400; letter-spacing: -.01em; }
 .brand-name b { font-weight: 800; color: var(--gold); }
 .brand-sub { font-size: .85rem; opacity: .8; }
