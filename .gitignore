@@ -1,0 +1,6 @@
+# Raw BLS downloads and combined outputs (large; rebuild with pull_qcew_state_industry.R)
+/data/
+.DS_Store
+.Rhistory
+.RData
+.claude/

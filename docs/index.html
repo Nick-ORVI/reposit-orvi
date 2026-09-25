@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reposit-ORVI · QCEW Jobs by State</title>
+  <meta name="description" content="Download custom subsets of BLS QCEW employment and wage data by state and industry, 1975 to present. From the Ohio River Valley Institute.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400;1,600&family=Overpass:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 13c4-5 8-5 13 0s9 5 13 0' fill='none' stroke='%23B71D2C' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M3 22c4-5 8-5 13 0s9 5 13 0' fill='none' stroke='%23002475' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M3 13c4-5 8-5 13 0s9 5 13 0" fill="none" stroke="#E0515E" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M3 22c4-5 8-5 13 0s9 5 13 0" fill="none" stroke="#FFFEFB" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">Reposit-<b>ORVI</b></span>
+      </a>
+      <span class="brand-sub">Ohio River Valley Institute · Data Repository</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">QCEW · Jobs &amp; wages by state and industry</p>
+      <h1>Build your own <em>employment dataset</em></h1>
+      <p class="lede">Filter the Bureau of Labor Statistics' Quarterly Census of Employment and Wages by state, year, industry and ownership, then download exactly the rows you need as a CSV. Annual averages from 1975 to the most recent year published.</p>
+    </div>
+  </section>
+
+  <main class="wrap layout">
+    <form id="filters" class="filters" autocomplete="off" onsubmit="return false">
+      <fieldset class="card">
+        <legend><span class="step">1</span>Dataset</legend>
+        <div id="series" class="seg"></div>
+        <p class="hint" id="series-note"></p>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">2</span>States</legend>
+        <div class="quick">
+          <button type="button" data-states="orvi" class="chip-btn">ORVI region (OH, PA, WV, KY)</button>
+          <button type="button" data-states="all" class="chip-btn">All</button>
+          <button type="button" data-states="none" class="chip-btn">Clear</button>
+        </div>
+        <input type="search" id="state-search" class="input" placeholder="Search states…" aria-label="Search states">
+        <div id="state-list" class="checklist" role="group" aria-label="States"></div>
+        <p class="hint"><span id="state-count">0</span> selected</p>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">3</span>Years</legend>
+        <div class="row2">
+          <label>From <select id="year-from" class="input"></select></label>
+          <label>To <select id="year-to" class="input"></select></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">4</span>Industry detail</legend>
+        <div id="level-list" class="checklist compact" role="group" aria-label="Industry detail levels"></div>
+        <p class="hint">Each level is a separate slice of the data. Picking more than one and adding the rows together will double count.</p>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">5</span>Specific industries <span class="opt">optional</span></legend>
+        <input type="search" id="ind-search" class="input" placeholder="Search by name or code, e.g. coal, 2121, hospitals" aria-label="Search industries">
+        <div id="ind-results" class="checklist ind-results" role="group" aria-label="Matching industries"></div>
+        <div id="ind-chips" class="chips"></div>
+        <label class="check"><input type="checkbox" id="ind-children" checked> Include sub-industries of selected codes</label>
+        <p class="hint">If you leave this blank, you get every industry at the detail levels selected above.</p>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">6</span>Ownership</legend>
+        <div id="own-list" class="checklist compact" role="group" aria-label="Ownership"></div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">7</span>Measures &amp; options</legend>
+        <div id="measure-list" class="checklist compact" role="group" aria-label="Measures"></div>
+        <hr>
+        <label class="check"><input type="checkbox" id="opt-labels" checked> Include label columns (state, industry, ownership names)</label>
+        <label class="check"><input type="checkbox" id="opt-drop-suppressed"> Drop rows BLS suppressed for confidentiality</label>
+        <p class="hint">By default, suppressed rows are kept with blank values and <code>suppressed = TRUE</code>. BLS reports these as zeros, which would undercount totals.</p>
+      </fieldset>
+    </form>
+
+    <section class="results" aria-live="polite">
+      <div class="card result-card">
+        <div class="result-head">
+          <div>
+            <p class="eyebrow dark">Your selection</p>
+            <p class="count"><span id="row-count">–</span> <span class="count-label">rows</span></p>
+            <p id="summary" class="summary"></p>
+          </div>
+          <button type="button" id="download" class="btn-primary" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download CSV
+          </button>
+        </div>
+        <div id="status" class="status"></div>
+        <div class="table-wrap">
+          <table id="preview"><thead></thead><tbody></tbody></table>
+        </div>
+        <p class="hint" id="preview-note"></p>
+      </div>
+
+      <div class="card notes">
+        <h2>About this data</h2>
+        <ul>
+          <li><strong>Source:</strong> <a href="https://www.bls.gov/cew/" target="_blank" rel="noopener">BLS Quarterly Census of Employment and Wages</a>, annual averages. These are counts of jobs covered by unemployment insurance, about 95% of U.S. jobs.</li>
+          <li><strong>NAICS vs. SIC:</strong> BLS switched industry classification systems in 2001. NAICS-based data is available for 1990 onward; the older SIC-based series covers 1975–2000. The industry codes do not map one-to-one.</li>
+          <li><strong>Suppression:</strong> BLS withholds figures that could reveal an individual employer. Establishment counts are still published for those rows.</li>
+          <li><strong>Levels:</strong> Domain and supersector are BLS groupings of NAICS sectors, not part of NAICS itself.</li>
+        </ul>
+        <p class="hint" id="build-info"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>Reposit-ORVI · <a href="https://ohiorivervalleyinstitute.org" target="_blank" rel="noopener">Ohio River Valley Institute</a></span>
+      <span>Data: U.S. Bureau of Labor Statistics, QCEW</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
